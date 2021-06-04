@@ -71,7 +71,26 @@ function mm_email_after_order_table( $order, $sent_to_admin, $plain_text, $email
    $phpmailer->SMTPSecure = "ssl";
  }
  add_action( 'phpmailer_init', 'send_smtp_email' );
+
 wp_mail("caohuyle11@gmail.com", "Subject", "Message");
+
+
+$query = <<<EOT
+SELECT * FROM `wp_postmeta` WHERE `meta_key` LIKE 'buy_as_gift'
+EOT;
+ $gift = $wpdb->get_results( $query );
+ foreach($gift as $g)
+ {
+               $query = <<<EOT
+               SELECT * FROM wp_posts AS p LEFT JOIN wp_postmeta AS mt ON p.id = mt.post_id
+               WHERE   post_type = 'product'
+                       AND post_status = 'publish'
+                       AND ID = ('{$g->post_id}')
+               EOT;
+               $products = $wpdb->get_results( $query );
+        }
+ // debug($gift);
+ // debug($products,true);
 /**
  * This is used for debug
  *
