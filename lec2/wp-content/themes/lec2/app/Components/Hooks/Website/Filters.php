@@ -47,7 +47,7 @@ class Filters extends AbstractFilter
     ];
 
     /**
-     * We don't need to use wordpress 5.** block editor in admin panel
+      *We don't need to use wordpress 5.* block editor in admin panel
      * @return bool
      */
     public function blockEditorForPost(){
@@ -268,6 +268,7 @@ class Filters extends AbstractFilter
             'label'   => __('Room reservations in the conference hotel are desirable.'),
         ), $checkout->get_value( 'room_reservation' ));
 
+
         echo '<div class="room-reservation"><h4>Room reservation</h4>';
         echo '<div role="wrapper" class="gj-datepicker gj-datepicker-bootstrap gj-unselectable input-group">';
         woocommerce_form_field( 'arrival_date', array(
@@ -293,6 +294,11 @@ class Filters extends AbstractFilter
     }
 
     public function checkoutFieldsAfterTerm($checkout) {
+        woocommerce_form_field( 'buy_as_gift_fe', array(
+            'type'          => 'checkbox',
+            'class'         => array('buy_as_gift_fe form-row-wide'),
+            'label'   => __('Buy as gift'),
+        ), $checkout->get_value( 'buy_as_gift_fe' ));
 //        woocommerce_form_field( 'subscribe_newsletter', array(
 //            'type'          => 'checkbox',
 //            'class'         => array('subscribe_newsletter form-row-wide'),
@@ -314,9 +320,9 @@ class Filters extends AbstractFilter
         // Load the datepicker jQuery-ui plugin script
         wp_enqueue_script( 'jquery-ui-datepicker' );
         wp_register_style('jquery-ui', '//ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css');
-        wp_enqueue_style( 'jquery-ui' );   
+        wp_enqueue_style( 'jquery-ui' );
     }
-    
+
     public function training_type_where( $where ) {
         $where = str_replace(
             array("meta_key = 'training_types_&&_training_type'",
