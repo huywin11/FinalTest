@@ -35,7 +35,7 @@ class GetTrainingForShorties extends AbstractAjax
             $return_data['items']['message'] = 'No results match your search criteria.';
 
             foreach ($return_data['items']['data'] as $key => $item) {
-
+ 
                 $return_data['items']['data'][$key] = [
                     'post_title'        => $item['post_title'],
                     'infor_url'         => $item['url'],

@@ -64,7 +64,7 @@ $terms_and_conditions_text = $theme_options['text_translation']['default_global_
 				foreach ( $fields as $key => $field ) {
 					woocommerce_form_field( $key, $field, $checkout->get_value( $key ) );
 				}
-				?>
+				?> 
 			</div>
 
 		</div>

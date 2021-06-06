@@ -20,7 +20,7 @@ class GetTrainingForSchedule extends AbstractAjax
 
         $result = $trainings->execute();
 
-        if($result){
+        if($result){ 
             $return_data = [];
 
             $return_data['items'] = $result;

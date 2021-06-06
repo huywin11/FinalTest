@@ -74,6 +74,44 @@ if ( ! defined( 'ABSPATH' ) ) {
                                                         $room_reservation = get_post_meta($order_id);
                                                         $before = '';
                                                         $after  = '';
+                                                        $items = $order->get_items();
+                                                        foreach ( $items as $item ) {
+                                                            $product_id = $item->get_product_id();
+                                                            break;
+                                                        }
+
+                                                        $buy_as_gift= get_post_meta($product_id,'buy_as_gift',true);
+
+                                                        //check buy as gift Front-end
+                                                        $buy_as_gift_fe = get_post_meta( $order_id, 'buy_as_gift_fe', true ) ?? '';
+
+                                                        if($buy_as_gift == 1 || $buy_as_gift_fe == 1){
+                                                            $randCode = rand(0,9999);
+                                                            $coupon_code = "GIFTCODE".$randCode;
+                                                            $amount = '100';
+                                                            $discount_type = 'percent';
+
+                                                            $coupon = array(
+                                                            'post_title' => "$coupon_code",
+                                                            'post_content' => '',
+                                                            'post_status' => 'publish',
+                                                            'post_author' => 1,
+                                                            'post_type' => 'shop_coupon');
+
+                                                            $new_coupon_id = wp_insert_post( $coupon );
+
+                                                            // Add meta
+                                                            update_post_meta( $new_coupon_id, 'discount_type', $discount_type );
+                                                            update_post_meta( $new_coupon_id, 'coupon_amount', $amount );
+                                                            update_post_meta( $new_coupon_id, 'individual_use', 'no' );
+                                                            update_post_meta( $new_coupon_id, 'product_ids', $product_id );
+                                                            update_post_meta( $new_coupon_id, 'exclude_product_ids', '' );
+                                                            update_post_meta( $new_coupon_id, 'usage_limit', '1' );
+                                                            update_post_meta( $new_coupon_id, 'usage_limit_per_user', '1');
+                                                            update_post_meta( $new_coupon_id, 'expiry_date', date('Y-m-d', strtotime(date('Y-m-d'). ' + 90 days')));
+                                                            update_post_meta( $new_coupon_id, 'apply_before_tax', 'yes' );
+                                                            update_post_meta( $new_coupon_id, 'free_shipping', 'no' );
+                                                        }
                                                         echo '<h3>'.wp_kses_post( $before . sprintf( __( '[Order #%s]', 'woocommerce' ) . $after . ' (<time datetime="%s">%s</time>)', $order->get_order_number(), $order->get_date_created()->format( 'c' ), wc_format_datetime( $order->get_date_created() ) ) ).'</h3>';
 
                                                         echo '<p><strong>'.__('Course').': </strong>'.get_post_meta($order_id,'order_custom_training_name',true).'</p>';
@@ -82,6 +120,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                                                         echo '<p><strong>'.__('Date').': </strong>'.get_post_meta($order_id,'order_custom_date',true).'</p>';
                                                         echo '<p><strong>'.__('Fee').': </strong>'.get_post_meta($order_id,'order_custom_price',true).'</p>';
                                                         echo '<p><strong>'.__('Type').': </strong>'.get_post_meta($order_id,'order_custom_training_type',true).'</p>';
+                                                        echo '<p><strong>'.__('Coupon').': </strong>'.$coupon_code.'</p>';
                                                         ?>
                                                         <h3>Course participants</h3>
                                                         <?php
@@ -366,6 +405,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                                                         $billing_vat_number = get_post_meta( $order_id, 'billing_vat_number', true ) ?? '';
                                                         $billing_order_number = get_post_meta( $order_id, 'billing_order_number', true ) ?? '';
                                                         $billing_message = get_post_meta( $order_id, 'billing_message', true ) ?? '';
+                                                        $coupons_message = get_post_meta( $order_id, $coupon_code, true ) ?? '';
 
                                                         $salutationLabel = __('Salutation');
                                                         $titleLabel = __('Title');
@@ -384,6 +424,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                                                         $VATNumberLabel = __('VAT number');
                                                         $orderNumberLabel = __('Order number');
                                                         $messageLabel = __('Message');
+                                                        $coupons  = _('Coupon');
 
                                                         renderEmailLineCustomerProcessingOrder($salutationLabel,$billing_salutation);
                                                         renderEmailLineCustomerProcessingOrder($titleLabel,$billing_title);
@@ -402,6 +443,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                                                         renderEmailLineCustomerProcessingOrder($VATNumberLabel,$billing_vat_number);
                                                         renderEmailLineCustomerProcessingOrder($orderNumberLabel,$billing_order_number);
                                                         renderEmailLineCustomerProcessingOrder($messageLabel,$billing_message);
+                                                        renderEmailLineCustomerProcessingOrder($coupons,$coupon_code);
 
                                                         if ( $order->has_shipping_address() && get_post_meta($order_id,'order_custom_ship_to_different_address',true)==1) {
                                                             echo '<h3>Billing address</h3>';
@@ -440,6 +482,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                                                             renderEmailLineCustomerProcessingOrder($VATNumberLabel,$shipping_vat_number);
                                                             renderEmailLineCustomerProcessingOrder($orderNumberLabel,$shipping_order_number);
                                                             renderEmailLineCustomerProcessingOrder($messageLabel,$shipping_message);
+                                                            renderEmailLineCustomerProcessingOrder($coupons,$coupon_code);
                                                         }
 
                                                         $room_reservation = get_post_meta( $order_id, 'room_reservation', true );

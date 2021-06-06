@@ -271,4 +271,5 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
         jQuery(".woocommerce-checkout").submit();
     }
 </script>
+
 <?php do_action( 'woocommerce_after_checkout_form', $checkout ); ?>

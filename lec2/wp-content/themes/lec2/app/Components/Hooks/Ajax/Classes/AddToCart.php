@@ -23,6 +23,7 @@ class AddToCart extends AbstractAjax
      * getMorePartner
      */
     public function addToCart() {
+
         if (!isset($_POST['training_id'])) {
             die('Missing training id');
         }

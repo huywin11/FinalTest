@@ -243,7 +243,7 @@ class ListProductAjax extends AbstractService
                          //
                          //         $objs = $wpdb->get_results($query);
                          $products = $wpdb->get_results( $query );
-
+                          
                          if(!empty($products))
                              {
                                  array_push($objs,$products[0]);
