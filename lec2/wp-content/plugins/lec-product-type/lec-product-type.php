@@ -40,7 +40,7 @@ class Lec_Product_Type_Plugin {
             wp_insert_term( 'training', 'product_type' );
         }
     }
- 
+
     /**
      * Load WC Dependencies
      *
@@ -58,7 +58,7 @@ class Lec_Product_Type_Plugin {
      */
     public function add_type( $types ) {
         $types['training'] = __( 'Training', LEC2_DOMAIN );
-       
+
         return $types;
     }
 
@@ -79,7 +79,7 @@ class Lec_Product_Type_Plugin {
 
         return $tabs;
     }
-    
+
     /**
      * Add Content to Product Tab
      */
@@ -153,11 +153,15 @@ class Lec_Product_Type_Plugin {
         $custom_fields["pass_personal_data"] = array('label' => __('Pass personal data'), 'value' => (get_post_meta( $order_id, 'pass_personal_data', true )?"yes":"no"));
 
         return array_merge($ofields, $custom_fields);
-    }  
+    }
 
     public function lec2_checkout_update_order_meta( $order_id, $posted ) {
         if ( ! empty( $_POST['in_house_training'] ) ) {
             update_post_meta( $order_id, 'in_house_training', wc_clean( $_POST['in_house_training'] ) );
+        }
+        // update_post_meta by as gift fe
+        if ( ! empty( $_POST['buy_as_gift_fe'] ) ) {
+            update_post_meta( $order_id, 'buy_as_gift_fe', wc_clean( $_POST['buy_as_gift_fe'] ) );
         }
         if ( ! empty( $_POST['room_reservation'] ) ) {
             update_post_meta( $order_id, 'room_reservation', wc_clean( $_POST['room_reservation'] ) );
